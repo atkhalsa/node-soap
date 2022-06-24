@@ -722,7 +722,7 @@ export class WSDL {
           parts.push(openingTagParts.join(''));
         } else {
           openingTagParts.push('>');
-          if (this.options.namespaceArrayElements || i === 0) {
+          if ((this.options.namespaceArrayElements || i === 0) && !this.options.flattenArrayElements) {
             parts.push(openingTagParts.join(''));
           }
           parts.push(body);
@@ -730,7 +730,9 @@ export class WSDL {
             if (emptyNonSubNameSpaceForArray) {
               parts.push(['</', name, '>'].join(''));
             } else {
-              parts.push(['</', appendColon(correctOuterNsPrefix), name, '>'].join(''));
+              if (!this.options.flattenArrayElements) {
+                parts.push(['</', appendColon(correctOuterNsPrefix), name, '>'].join(''));
+              }
             }
           }
         }
@@ -1150,6 +1152,12 @@ export class WSDL {
       this.options.namespaceArrayElements = options.namespaceArrayElements;
     } else {
       this.options.namespaceArrayElements = true;
+    }
+
+    if (options.flattenArrayElements !== undefined) {
+      this.options.flattenArrayElements = options.flattenArrayElements;
+    } else {
+      this.options.flattenArrayElements = false;
     }
 
     // Allow any request headers to keep passing through
